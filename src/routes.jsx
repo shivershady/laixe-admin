@@ -1,13 +1,12 @@
+import { ClassManagement, CourseManagement, ExamManagement, Home } from "@/pages/dashboard";
 import {
+  AcademicCapIcon,
   HomeIcon,
-  UserCircleIcon,
-  TableCellsIcon,
   InformationCircleIcon,
   ServerStackIcon,
-  RectangleStackIcon,
 } from "@heroicons/react/24/solid";
-import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
-import { SignIn, SignUp } from "@/pages/auth";
+
+import { SignIn } from "@/pages/auth";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -19,27 +18,27 @@ export const routes = [
     pages: [
       {
         icon: <HomeIcon {...icon} />,
-        name: "dashboard",
+        name: "Doanh thu",
         path: "/home",
         element: <Home />,
       },
       {
-        icon: <UserCircleIcon {...icon} />,
-        name: "profile",
-        path: "/profile",
-        element: <Profile />,
-      },
-      {
-        icon: <TableCellsIcon {...icon} />,
-        name: "tables",
-        path: "/tables",
-        element: <Tables />,
-      },
-      {
         icon: <InformationCircleIcon {...icon} />,
-        name: "notifications",
-        path: "/notifications",
-        element: <Notifications />,
+        name: "Quản lý lớp học",
+        path: "/class",
+        element: <ClassManagement />,
+      },
+      {
+        icon: <AcademicCapIcon {...icon} />,
+        name: "Quản lý khóa học",
+        path: "/course",
+        element: <CourseManagement />,
+      },
+      {
+        icon: <AcademicCapIcon {...icon} />,
+        name: "Quản lý bài thi",
+        path: "/exam",
+        element: <ExamManagement />,
       },
     ],
   },
@@ -52,12 +51,6 @@ export const routes = [
         name: "sign in",
         path: "/sign-in",
         element: <SignIn />,
-      },
-      {
-        icon: <RectangleStackIcon {...icon} />,
-        name: "sign up",
-        path: "/sign-up",
-        element: <SignUp />,
       },
     ],
   },
