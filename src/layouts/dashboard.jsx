@@ -5,9 +5,10 @@ import {
 } from "@/widgets/layout";
 import { Navigate, Route, Routes } from "react-router-dom";
 
+import GroupChat from "@/components/GroupChat";
+import routes from "@/routes";
 import { useMaterialTailwindController } from "@/context";
 import { useUser } from "@/hooks/UserContext";
-import routes from "@/routes";
 import { userService } from "@/services/userService";
 
 export function Dashboard() {
@@ -54,6 +55,7 @@ export function Dashboard() {
             <Footer />
           </div>
         </div>
+        <GroupChat />
       </div>
     )
   }
