@@ -6,9 +6,9 @@ import {
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import GroupChat from "@/components/GroupChat";
-import routes from "@/routes";
 import { useMaterialTailwindController } from "@/context";
 import { useUser } from "@/hooks/UserContext";
+import routes from "@/routes";
 import { userService } from "@/services/userService";
 
 export function Dashboard() {
@@ -16,6 +16,8 @@ export function Dashboard() {
   const { sidenavType } = controller;
   const token = localStorage.getItem('token');
   const { user, updateUser } = useUser();
+  const rolesAdmin = user?.roles.includes("Admin")
+  const rolesTeacher = user?.roles.includes("Teacher")
 
   const fetchUserInfo = async () => {
     try {
@@ -46,8 +48,14 @@ export function Dashboard() {
             {routes.map(
               ({ layout, pages }) =>
                 layout === "dashboard" &&
-                pages.map(({ path, element }, index) => (
-                  <Route key={index} exact path={path} element={element} />
+                pages.map(({ path, element, permission }, index) => (
+                  rolesAdmin ? (
+                    <Route key={index} exact path={path} element={element} />
+                  ) : rolesTeacher && permission === "Teacher" ? (
+                    <Route key={index} exact path={path} element={element} />
+                  ) : (
+                    <></>
+                  )
                 ))
             )}
           </Routes>

@@ -230,7 +230,9 @@ export function ExamManagement() {
       console.log(updatedExam);
       const payload = updatedExam.questions.map(item => ({
         content: item.content || item.text,
-        questionId: item.questionId || 0
+        questionId: item.questionId || 0,
+        startTime: item.startTime,
+        endTime: item.endTime
       }))
       try {
         await questionService.postPractice(updatedExam.examId, payload);
@@ -244,17 +246,17 @@ export function ExamManagement() {
 
 
   return (
-    <Card className="container mx-auto p-4 mt-8">
+    <Card className="container p-4 mx-auto mt-8">
       <CardHeader>
-        <Typography variant="h3" className="font-bold p-4">Quản lý bài kiểm tra</Typography>
+        <Typography variant="h3" className="p-4 font-bold">Quản lý bài kiểm tra</Typography>
       </CardHeader>
       <CardBody>
         <div className="mb-6">
           <Button
-            className="flex items-center gap-2"
+            className="flex gap-2 items-center"
             onClick={() => setIsAddDialogOpen(true)}
           >
-            <PlusIcon className="h-5 w-5" /> Thêm bài kiểm tra
+            <PlusIcon className="w-5 h-5" /> Thêm bài kiểm tra
           </Button>
         </div>
         <CardBody className="overflow-x-auto px-0 pt-0 pb-2">
@@ -262,7 +264,7 @@ export function ExamManagement() {
             <thead>
               <tr>
                 {["Khóa", "Tên", "Giá", "Loại", "Thời gian", "Thao tác"].map((el) => (
-                  <th key={el} className="border-b border-blue-gray-50 py-3 px-5 text-left">
+                  <th key={el} className="px-5 py-3 text-left border-b border-blue-gray-50">
                     <Typography variant="small" className="text-[11px] font-bold uppercase text-blue-gray-400">
                       {el}
                     </Typography>
@@ -275,17 +277,17 @@ export function ExamManagement() {
                 group.exams.map((exam, index) => (
                   <tr key={exam.examId}>
                     {index === 0 && (
-                      <td rowSpan={group.exams.length} className="py-3 px-5 border-b border-blue-gray-50">
+                      <td rowSpan={group.exams.length} className="px-5 py-3 border-b border-blue-gray-50">
                         {group.courseName}
                       </td>
                     )}
-                    <td className="py-3 px-5 border-b border-blue-gray-50">{exam.examName}</td>
-                    <td className="py-3 px-5 border-b border-blue-gray-50">{exam.price}</td>
-                    <td className="py-3 px-5 border-b border-blue-gray-50">
+                    <td className="px-5 py-3 border-b border-blue-gray-50">{exam.examName}</td>
+                    <td className="px-5 py-3 border-b border-blue-gray-50">{exam.price}</td>
+                    <td className="px-5 py-3 border-b border-blue-gray-50">
                       {examTypes.find(type => type.value === exam.type)?.label}
                     </td>
-                    <td className="py-3 px-5 border-b border-blue-gray-50">{exam.time} phút</td>
-                    <td className="py-3 px-5 border-b border-blue-gray-50">
+                    <td className="px-5 py-3 border-b border-blue-gray-50">{exam.time} phút</td>
+                    <td className="px-5 py-3 border-b border-blue-gray-50">
                       <div className="flex space-x-2">
                         <Button
                           variant="outlined"
@@ -295,7 +297,7 @@ export function ExamManagement() {
                             setIsEditDialogOpen(true);
                           }}
                         >
-                          <PencilIcon className="h-4 w-4" />
+                          <PencilIcon className="w-4 h-4" />
                         </Button>
                         <Button
                           variant="outlined"
@@ -305,7 +307,7 @@ export function ExamManagement() {
                             setIsDetailDialogOpen(true);
                           }}
                         >
-                          <InformationCircleIcon className="h-4 w-4" />
+                          <InformationCircleIcon className="w-4 h-4" />
                         </Button>
                         <Button
                           variant="outlined"
@@ -316,7 +318,7 @@ export function ExamManagement() {
                             setIsDeleteDialogOpen(true);
                           }}
                         >
-                          <TrashIcon className="h-4 w-4" />
+                          <TrashIcon className="w-4 h-4" />
                         </Button>
                       </div>
                     </td>
@@ -360,11 +362,32 @@ export function ExamManagement() {
           )}
 
           <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-2">{examDetails?.type == 1 ? "Câu hỏi" : "Video"}</h3>
+            <h3 className="mb-2 text-lg font-semibold">{examDetails?.type == 1 ? "Câu hỏi" : "Video"}</h3>
             {examDetails && examDetails?.questions && examDetails?.questions.map((question, questionIndex) => (
               <div key={questionIndex}>
-                <h3 className="text-xs font-semibold mb-2">{examDetails?.type == 1 ? "câu hỏi" : "video"} {questionIndex + 1}</h3>
-                <div className="border p-4 rounded-md mb-4 space-y-4">
+                <h3 className="mb-2 text-xs font-semibold">{examDetails?.type == 1 ? "câu hỏi" : "video"} {questionIndex + 1}</h3>
+                <div className="p-4 mb-4 space-y-4 rounded-md border">
+                  {examDetails?.type == 2 && (
+                    <div>
+                      <Typography variant="h6">Thời gian đúng</Typography>
+                      <div className="flex space-x-4">
+                        <Input
+                          label="Thời gian bắt đầu (HH:MM:SS)"
+                          type="text"
+                          value={question.startTime || "00:00:00"}
+                          onChange={(e) => updateQuestion(questionIndex, 'startTime', e.target.value)}
+                          className="flex-grow mb-2"
+                        />
+                        <Input
+                          label="Thời gian kết thúc (HH:MM:SS)"
+                          type="text"
+                          value={question.endTime || "00:00:00"}
+                          onChange={(e) => updateQuestion(questionIndex, 'endTime', e.target.value)}
+                          className="flex-grow mb-2"
+                        />
+                      </div>
+                    </div>
+                  )}
                   <Input
                     label={examDetails?.type == 1 ? "câu hỏi" : "video"}
                     value={question.text}
@@ -387,9 +410,9 @@ export function ExamManagement() {
                         onChange={(e) => updateQuestion(questionIndex, 'file', e.target.files?.[0] || null)}
                         className="mb-2"
                       />
-                      <h4 className="font-semibold mt-4 mb-2">Câu trả lời:</h4>
+                      <h4 className="mt-4 mb-2 font-semibold">Câu trả lời:</h4>
                       {question.answers.map((answer, answerIndex) => (
-                        <div key={answerIndex} className="flex items-center space-x-2 mb-2">
+                        <div key={answerIndex} className="flex items-center mb-2 space-x-2">
                           <Input
                             value={answer.content}
                             onChange={(e) => updateAnswer(questionIndex, answerIndex, 'content', e.target.value)}
@@ -406,7 +429,7 @@ export function ExamManagement() {
                             className="p-2"
                             onClick={() => removeAnswer(questionIndex, answerIndex)}
                           >
-                            <TrashIcon className="h-4 w-4" />
+                            <TrashIcon className="w-4 h-4" />
                           </Button>
                         </div>
                       ))}
@@ -426,7 +449,7 @@ export function ExamManagement() {
                     className="flex items-center mt-4"
                     onClick={() => removeQuestion(questionIndex)}
                   >
-                    <TrashIcon className="h-4 w-4 mr-2" /> Xóa {examDetails?.type == 1 ? "câu hỏi" : "video"}
+                    <TrashIcon className="mr-2 w-4 h-4" /> Xóa {examDetails?.type == 1 ? "câu hỏi" : "video"}
                   </Button>
                 </div>
               </div>
@@ -435,7 +458,7 @@ export function ExamManagement() {
               className="flex items-center"
               onClick={addQuestion}
             >
-              <PlusIcon className="h-4 w-4 mr-2" /> Thêm {examDetails?.type == 1 ? "câu hỏi" : "video"}
+              <PlusIcon className="mr-2 w-4 h-4" /> Thêm {examDetails?.type == 1 ? "câu hỏi" : "video"}
             </Button>
           </div>
         </DialogBody>

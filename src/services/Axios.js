@@ -37,7 +37,7 @@ function getInstance() {
     error => {
       if (error.response && error.response.status === 403) {
         // Redirect to login page
-        window.location.href = '/auth/sign-in'; // Adjust the path as necessary
+        // window.location.href = '/auth/sign-in'; // Adjust the path as necessary
       }
       console.log(error);
       return Promise.reject(error);

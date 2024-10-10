@@ -30,7 +30,7 @@ export function SignIn() {
       });
       if (response.token) {
         localStorage.setItem('token', response.token);
-        navigate('/dashboard/home')
+        navigate('/dashboard/class')
       }
     } catch (error) {
       console.log("Lỗi:", error)
@@ -38,14 +38,14 @@ export function SignIn() {
   };
 
   return (
-    <section className="m-8 flex gap-4">
-      <div className="w-full lg:w-3/5 mt-24">
+    <section className="flex gap-4 m-8">
+      <div className="mt-24 w-full lg:w-3/5">
         <div className="text-center">
-          <Typography variant="h2" className="font-bold mb-4">Đăng Nhập</Typography>
+          <Typography variant="h2" className="mb-4 font-bold">Đăng Nhập</Typography>
           <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Nhập email và mật khẩu của bạn để đăng nhập.</Typography>
         </div>
-        <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2" onSubmit={handleSubmit}>
-          <div className="mb-1 flex flex-col gap-6">
+        <form className="mx-auto mt-8 mb-2 w-80 max-w-screen-lg lg:w-1/2" onSubmit={handleSubmit}>
+          <div className="flex flex-col gap-6 mb-1">
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               User Name
             </Typography>
@@ -78,10 +78,10 @@ export function SignIn() {
           </Button>
         </form>
       </div>
-      <div className="w-2/5 h-full hidden lg:block">
+      <div className="hidden w-2/5 h-full lg:block">
         <img
           src="/img/pattern.png"
-          className="h-full w-full object-cover rounded-3xl"
+          className="object-cover w-full h-full rounded-3xl"
         />
       </div>
     </section>

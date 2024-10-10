@@ -1,4 +1,5 @@
 import { setOpenSidenav, useMaterialTailwindController } from "@/context";
+import { useUser } from "@/hooks/UserContext";
 import {
   Button,
   IconButton,
@@ -10,6 +11,9 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import PropTypes from "prop-types";
 
 export function Sidenav({ brandImg, brandName, routes }) {
+  const { user, updateUser } = useUser();
+  const rolesAdmin = user?.roles.includes("Admin")
+  const rolesTeacher = user?.roles.includes("Teacher")
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavColor, sidenavType, openSidenav } = controller;
   const sidenavTypes = {
@@ -26,7 +30,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
       <div
         className={`relative`}
       >
-        <Link to="/" className="py-6 px-8 text-center">
+        <Link to="/" className="px-8 py-6 text-center">
           <Typography
             variant="h6"
             color={sidenavType === "dark" ? "white" : "blue-gray"}
@@ -39,17 +43,17 @@ export function Sidenav({ brandImg, brandName, routes }) {
           color="white"
           size="sm"
           ripple={false}
-          className="absolute right-0 top-0 grid rounded-br-none rounded-tl-none xl:hidden"
+          className="grid absolute top-0 right-0 rounded-tl-none rounded-br-none xl:hidden"
           onClick={() => setOpenSidenav(dispatch, false)}
         >
-          <XMarkIcon strokeWidth={2.5} className="h-5 w-5 text-white" />
+          <XMarkIcon strokeWidth={2.5} className="w-5 h-5 text-white" />
         </IconButton>
       </div>
       <div className="m-4">
         {routes.map(({ layout, title, pages }, key) => {
           if (layout === 'auth') return
           return (
-            <ul key={key} className="mb-4 flex flex-col gap-1">
+            <ul key={key} className="flex flex-col gap-1 mb-4">
               {title && (
                 <li className="mx-3.5 mt-4 mb-2">
                   <Typography
@@ -61,8 +65,8 @@ export function Sidenav({ brandImg, brandName, routes }) {
                   </Typography>
                 </li>
               )}
-              {pages.map(({ icon, name, path }) => (
-                <li key={name}>
+              {pages.map(({ icon, name, path, permission }) => (
+                rolesAdmin ? <li key={name}>
                   <NavLink to={`/${layout}${path}`}>
                     {({ isActive }) => (
                       <Button
@@ -74,7 +78,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
                               ? "white"
                               : "blue-gray"
                         }
-                        className="flex items-center gap-4 px-4 capitalize"
+                        className="flex gap-4 items-center px-4 capitalize"
                         fullWidth
                       >
                         {icon}
@@ -87,7 +91,30 @@ export function Sidenav({ brandImg, brandName, routes }) {
                       </Button>
                     )}
                   </NavLink>
-                </li>
+                </li> : rolesTeacher && permission === "Teacher" ? <NavLink to={`/${layout}${path}`}>
+                  {({ isActive }) => (
+                    <Button
+                      variant={isActive ? "gradient" : "text"}
+                      color={
+                        isActive
+                          ? sidenavColor
+                          : sidenavType === "dark"
+                            ? "white"
+                            : "blue-gray"
+                      }
+                      className="flex gap-4 items-center px-4 capitalize"
+                      fullWidth
+                    >
+                      {icon}
+                      <Typography
+                        color="inherit"
+                        className="font-medium capitalize"
+                      >
+                        {name}
+                      </Typography>
+                    </Button>
+                  )}
+                </NavLink> : null
               ))}
             </ul>
           )
