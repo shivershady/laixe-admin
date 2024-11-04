@@ -14,5 +14,17 @@ export const userService = {
   },
   getAllUser: () => {
     return Axios.get('api/users')
+  },
+  getRoleUser: () => {
+    return Axios.get('api/users/roles')
+  },
+  createUser: (payload) => {
+    return Axios.post('api/users', payload)
+  },
+  updateUser: (id, payload) => {
+    return Axios.put(`api/users/${id}`, payload)
+  },
+  deleteUser: (id) => {
+    return Axios.del(`api/users/${id}`)
   }
 };

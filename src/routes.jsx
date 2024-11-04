@@ -1,10 +1,10 @@
-import { ClassManagement, CourseManagement, ExamManagement, Home } from "@/pages/dashboard";
 import {
   AcademicCapIcon,
   HomeIcon,
   InformationCircleIcon,
   ServerStackIcon,
 } from "@heroicons/react/24/solid";
+import { ClassManagement, CourseManagement, ExamManagement, Home, TeacherManagement } from "@/pages/dashboard";
 
 import { SignIn } from "@/pages/auth";
 
@@ -16,11 +16,19 @@ export const routes = [
   {
     layout: "dashboard",
     pages: [
+
       {
         icon: <HomeIcon {...icon} />,
         name: "Doanh thu",
         path: "/home",
         element: <Home />,
+        permission: "Admin",
+      },
+      {
+        icon: <HomeIcon {...icon} />,
+        name: "Quản lý giáo viên",
+        path: "/teacher",
+        element: <TeacherManagement />,
         permission: "Admin",
       },
       {
