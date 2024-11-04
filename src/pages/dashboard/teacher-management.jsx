@@ -1,4 +1,9 @@
 import {
+  PencilIcon,
+  PlusIcon,
+  TrashIcon
+} from "@heroicons/react/24/outline"
+import {
   Button,
   Card,
   CardBody,
@@ -10,11 +15,6 @@ import {
   Input,
   Typography,
 } from "@material-tailwind/react"
-import {
-  PencilIcon,
-  PlusIcon,
-  TrashIcon
-} from "@heroicons/react/24/outline"
 import { useEffect, useState } from "react"
 
 import { userService } from "@/services/userService"
@@ -22,7 +22,6 @@ import { userService } from "@/services/userService"
 export function TeacherManagement() {
   const [teachers, setTeachers] = useState([])
   const [selectedTeacher, setSelectedTeacher] = useState(null)
-  console.log('🚀 ~ TeacherManagement ~ selectedTeacher:', selectedTeacher)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
@@ -47,7 +46,6 @@ export function TeacherManagement() {
           age: teacher.age || 'N/A',
           phoneNumber: teacher.phoneNumber || 'N/A',
           address: teacher.address || 'N/A',
-          password: teacher.password || 'N/A',
         }))
       setTeachers(teachersList)
     } catch (error) {
@@ -69,6 +67,12 @@ export function TeacherManagement() {
   }, [])
 
   const handleAddTeacher = async () => {
+    // Validate form fields
+    if (!newTeacher.userName || !newTeacher.email || !newTeacher.age || !newTeacher.phoneNumber || !newTeacher.address || !newTeacher.password) {
+      alert("Vui lòng điền đầy đủ thông tin!");
+      return;
+    }
+
     try {
       const payload = {
         ...newTeacher,
@@ -83,6 +87,12 @@ export function TeacherManagement() {
   }
 
   const handleEditTeacher = async () => {
+    // Validate form fields
+    if (!selectedTeacher.userName || !selectedTeacher.email || !selectedTeacher.age || !selectedTeacher.phoneNumber || !selectedTeacher.address) {
+      alert("Vui lòng điền đầy đủ thông tin!");
+      return;
+    }
+
     try {
       const payload = {
         ...selectedTeacher,
@@ -125,7 +135,7 @@ export function TeacherManagement() {
             <table className="w-full min-w-[640px] table-auto">
               <thead>
                 <tr>
-                  {["Họ tên", "Email", "Tuổi", "Số điện thoại", "Địa chỉ", "Mật khẩu", "Thao tác"].map((el) => (
+                  {["Họ tên", "Email", "Tuổi", "Số điện thoại", "Địa chỉ", "Thao tác"].map((el) => (
                     <th key={el} className="border-b border-blue-gray-50 py-3 px-5 text-left">
                       <Typography variant="small" className="text-[11px] font-bold uppercase text-blue-gray-400">
                         {el}
@@ -142,7 +152,6 @@ export function TeacherManagement() {
                     <td className="py-3 px-5 border-b">{teacher.age}</td>
                     <td className="py-3 px-5 border-b">{teacher.phoneNumber}</td>
                     <td className="py-3 px-5 border-b">{teacher.address}</td>
-                    <td className="py-3 px-5 border-b">{teacher.password}</td>
                     <td className="py-3 px-5 border-b">
                       <div className="flex space-x-2">
                         <Button
@@ -255,11 +264,6 @@ export function TeacherManagement() {
               label="Địa chỉ"
               value={selectedTeacher?.address}
               onChange={(e) => setSelectedTeacher({ ...selectedTeacher, address: e.target.value })}
-            />
-            <Input
-              label="Mật khẩu"
-              value={selectedTeacher?.password}
-              onChange={(e) => setSelectedTeacher({ ...selectedTeacher, password: e.target.value })}
             />
           </div>
         </DialogBody>
