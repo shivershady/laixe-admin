@@ -1,10 +1,4 @@
 import {
-  InformationCircleIcon,
-  PencilIcon,
-  PlusIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
-import {
   Button,
   Card,
   CardBody,
@@ -19,6 +13,12 @@ import {
   Select,
   Typography
 } from "@material-tailwind/react";
+import {
+  InformationCircleIcon,
+  PencilIcon,
+  PlusIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { useEffect, useState } from 'react';
 
 import Pagination from "@/components/Pagination";
@@ -359,7 +359,7 @@ export function ExamManagement() {
       </Dialog>
       <Dialog open={isDetailDialogOpen} handler={() => setIsDetailDialogOpen(!isDetailDialogOpen)} size="xl">
         <DialogHeader>Chi tiết bài kiểm tra</DialogHeader>
-        <DialogBody divider className="h-[40rem] overflow-y-auto">
+        <DialogBody divider className="h-[30rem] overflow-y-auto">
           {examDetails && (
             <div className="space-y-4">
               <Typography><strong>Khóa:</strong> {examDetails?.courseName}</Typography>
