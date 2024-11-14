@@ -21,6 +21,7 @@ import { useEffect, useState } from 'react';
 
 import Pagination from "@/components/Pagination";
 import { courseServices } from "@/services/courseServices";
+import { toast } from 'react-toastify';
 
 const courseTypes = [
   { value: 1, label: "Ô tô" },
@@ -70,8 +71,10 @@ export function CourseManagement() {
       });
       await fetchCourses();
       setIsAddDialogOpen(false);
+      toast.success("Thêm khóa học thành công!");
     } catch (error) {
       console.error('Error adding course:', error);
+      toast.error("Có lỗi xảy ra khi thêm khóa học.");
     }
   };
 
@@ -83,8 +86,10 @@ export function CourseManagement() {
       });
       await fetchCourses();
       setIsEditDialogOpen(false);
+      toast.success("Cập nhật khóa học thành công!");
     } catch (error) {
       console.error('Error editing course:', error);
+      toast.error("Có lỗi xảy ra khi cập nhật khóa học.");
     }
   };
 
@@ -93,23 +98,25 @@ export function CourseManagement() {
       await courseServices.deleteCourse(id);
       await fetchCourses();
       setIsDeleteDialogOpen(false);
+      toast.success("Xóa khóa học thành công!");
     } catch (error) {
       console.error('Error deleting course:', error);
+      toast.error("Có lỗi xảy ra khi xóa khóa học.");
     }
   };
 
   return (
-    <Card className="container mx-auto p-4 mt-8">
+    <Card className="container p-4 mx-auto mt-8">
       <CardHeader>
-        <Typography variant="h3" className="font-bold p-4">Quản lý khóa học</Typography>
+        <Typography variant="h3" className="p-4 font-bold">Quản lý khóa học</Typography>
       </CardHeader>
       <CardBody>
         <div className="mb-6">
           <Button
-            className="flex items-center gap-2"
+            className="flex gap-2 items-center"
             onClick={() => setIsAddDialogOpen(true)}
           >
-            <PlusIcon className="h-5 w-5" /> Thêm khóa học
+            <PlusIcon className="w-5 h-5" /> Thêm khóa học
           </Button>
         </div>
         <CardBody className="overflow-x-auto px-0 pt-0 pb-2">
@@ -117,7 +124,7 @@ export function CourseManagement() {
             <thead>
               <tr>
                 {["Tên khóa học", "Loại", "Thao tác"].map((el) => (
-                  <th key={el} className="border-b border-blue-gray-50 py-3 px-5 text-left">
+                  <th key={el} className="px-5 py-3 text-left border-b border-blue-gray-50">
                     <Typography variant="small" className="text-[11px] font-bold uppercase text-blue-gray-400">
                       {el}
                     </Typography>
@@ -142,7 +149,7 @@ export function CourseManagement() {
                             setIsEditDialogOpen(true);
                           }}
                         >
-                          <PencilIcon className="h-4 w-4" />
+                          <PencilIcon className="w-4 h-4" />
                         </Button>
                         <Button
                           variant="outlined"
@@ -153,7 +160,7 @@ export function CourseManagement() {
                             setIsDeleteDialogOpen(true);
                           }}
                         >
-                          <TrashIcon className="h-4 w-4" />
+                          <TrashIcon className="w-4 h-4" />
                         </Button>
                       </div>
                     </td>

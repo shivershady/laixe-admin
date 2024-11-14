@@ -1,12 +1,4 @@
 import {
-  InformationCircleIcon,
-  PencilIcon,
-  PlusIcon,
-  TrashIcon,
-  UserGroupIcon,
-  UserPlusIcon
-} from "@heroicons/react/24/outline"
-import {
   Button,
   Card,
   CardBody,
@@ -21,12 +13,22 @@ import {
   Select,
   Typography
 } from "@material-tailwind/react"
+import {
+  InformationCircleIcon,
+  PencilIcon,
+  PlusIcon,
+  TrashIcon,
+  UserGroupIcon,
+  UserPlusIcon
+} from "@heroicons/react/24/outline"
 import { useEffect, useState } from "react"
 
 import Pagination from "@/components/Pagination"
 import { classServices } from "@/services/classServices"
-import { userService } from "@/services/userService"
 import { format } from "date-fns"
+import { toast } from 'react-toastify'
+import { useUser } from "@/hooks/UserContext"
+import { userService } from "@/services/userService"
 
 const daysOfWeek = [
   { label: "Thứ 2", value: 2 },
@@ -51,6 +53,8 @@ export function ClassManagement() {
   const [totalPages, setTotalPages] = useState(1); // Khai báo state cho totalPages
   const [teachers, setTeachers] = useState([]); // Khai báo state cho danh sách giáo viên
   const [students, setStudents] = useState([]); // Khai báo state cho danh sách giáo viên
+  const { user } = useUser();
+  const rolesAdmin = user?.roles.includes("Admin")
 
   const [classDetails, setClassDetails] = useState(null)
   const [attendanceList, setAttendanceList] = useState([])
@@ -116,10 +120,9 @@ export function ClassManagement() {
   }, []); // Chỉ gọi một lần khi component được mount
 
   const handleAddClass = async (newClass) => {
-    // Tạo payload cho API
     const payload = {
       name: newClass.name,
-      teacherId: newClass.teacherId, // Sử dụng teacherId từ newClass
+      teacherId: newClass.teacherId,
       linkGoogleMeet: newClass.meetLink,
       day1: newClass.schedule[0] || 0,
       day2: newClass.schedule[1] || 0,
@@ -128,13 +131,15 @@ export function ClassManagement() {
     };
 
     try {
-      await classServices.postClass(payload); // Gọi API
-      await fetchClasses()
-      setIsAddDialogOpen(false)
+      await classServices.postClass(payload);
+      await fetchClasses();
+      setIsAddDialogOpen(false);
+      toast.success("Thêm lớp học thành công!");
     } catch (error) {
       console.error('Error adding class:', error);
+      toast.error("Có lỗi xảy ra khi thêm lớp học.");
     }
-  }
+  };
 
   const handleEditClass = async (updatedClass) => {
     const payload = {
@@ -150,8 +155,10 @@ export function ClassManagement() {
       await classServices.editClass({ id: updatedClass.id, payload }); // Gọi API
       await fetchClasses()
       setIsEditDialogOpen(false)
+      toast.success("Cập nhật lớp học thành công!");
     } catch (error) {
       console.error('Error adding class:', error);
+      toast.error("Có lỗi xảy ra khi cập nhật lớp học.");
     }
   }
 
@@ -160,8 +167,10 @@ export function ClassManagement() {
       await classServices.deleteClass(id); // Gọi API
       await fetchClasses()
       setIsDeleteDialogOpen(false)
+      toast.success("Xóa lớp học thành công!");
     } catch (error) {
       console.error('Error adding class:', error);
+      toast.error("Có lỗi xảy ra khi xóa lớp học.");
     }
   }
 
@@ -187,8 +196,10 @@ export function ClassManagement() {
       const updatedDetails = await classServices.getClassDetails(selectedClass.id)
       setClassDetails(updatedDetails)
       setNewStudentName("")
+      toast.success("Thêm sinh viên vào lớp học!")
     } catch (error) {
       console.error('Error adding student to class:', error)
+      toast.error("Có lỗi xảy ra khi thêm sinh viên.")
     }
   }
   const handleDelStudent = async (studentId) => {
@@ -197,8 +208,10 @@ export function ClassManagement() {
       const updatedDetails = await classServices.getClassDetails(selectedClass.id)
       setClassDetails(updatedDetails)
       setNewStudentName("")
+      toast.success("Xóa sinh viên trong lớp học!")
     } catch (error) {
       console.error('Error adding student to class:', error)
+      toast.error("Có lỗi xảy ra khi xóa sinh viên.")
     }
   }
 
@@ -213,34 +226,35 @@ export function ClassManagement() {
   const handleSubmitAttendance = async () => {
     try {
       await classServices.submitAttendance(selectedClass.id, attendanceList)
-      alert("Attendance submitted successfully")
+      toast.success("Cập nhật danh sách học sinh!")
       setAttendanceList([])
     } catch (error) {
       console.error('Error submitting attendance:', error)
+      toast.error("Có lỗi xảy ra khi cập nhật danh sách học sinh.")
     }
   }
 
 
   return (
-    <Card className="container mx-auto p-4 mt-8">
+    <Card className="container p-4 mx-auto mt-8">
       <CardHeader>
-        <Typography variant="h3" className="font-bold p-4">Quản lý lớp học</Typography>
+        <Typography variant="h3" className="p-4 font-bold">Quản lý lớp học</Typography>
       </CardHeader>
       <CardBody>
-        <div className="mb-6">
+        {rolesAdmin && <div className="mb-6">
           <Button
-            className="flex items-center gap-2"
+            className="flex gap-2 items-center"
             onClick={() => setIsAddDialogOpen(true)}
           >
-            <PlusIcon className="h-5 w-5" /> Thêm lớp học
+            <PlusIcon className="w-5 h-5" /> Thêm lớp học
           </Button>
-        </div>
+        </div>}
         <CardBody className="overflow-x-auto px-0 pt-0 pb-2">
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
                 {["Tên lớp", "Giáo viên", "Link Google Meet", "Ngày bắt đầu", "Ngày kết thúc", "Lịch học", "Số học sinh", "Thao tác"].map((el) => (
-                  <th key={el} className="border-b border-blue-gray-50 py-3 px-5 text-left">
+                  <th key={el} className="px-5 py-3 text-left border-b border-blue-gray-50">
                     <Typography variant="small" className="text-[11px] font-bold uppercase text-blue-gray-400">
                       {el}
                     </Typography>
@@ -265,14 +279,14 @@ export function ClassManagement() {
                     <td className={className}>{cls.schedule.map(day => daysOfWeek.find(d => d.value === day)?.label).join(", ")}</td>
                     <td className={className}>
                       <div className="flex items-center">
-                        <UserGroupIcon className="mr-2 h-4 w-4" />
+                        <UserGroupIcon className="mr-2 w-4 h-4" />
                         {cls.students.length}
                       </div>
                     </td>
                     <td className={className}>
                       <div className="flex space-x-2">
 
-                        <Button
+                        {rolesAdmin && <Button
                           variant="outlined"
                           size="sm"
                           onClick={() => {
@@ -280,8 +294,8 @@ export function ClassManagement() {
                             setIsEditDialogOpen(true)
                           }}
                         >
-                          <PencilIcon className="h-4 w-4" />
-                        </Button>
+                          <PencilIcon className="w-4 h-4" />
+                        </Button>}
 
                         <Button
                           variant="outlined"
@@ -291,10 +305,10 @@ export function ClassManagement() {
                             setIsDetailDialogOpen(true)
                           }}
                         >
-                          <InformationCircleIcon className="h-4 w-4" />
+                          <InformationCircleIcon className="w-4 h-4" />
                         </Button>
 
-                        <Button
+                        {rolesAdmin && <Button
                           variant="outlined"
                           size="sm"
                           color="red"
@@ -303,8 +317,8 @@ export function ClassManagement() {
                             setIsDeleteDialogOpen(true)
                           }}
                         >
-                          <TrashIcon className="h-4 w-4" />
-                        </Button>
+                          <TrashIcon className="w-4 h-4" />
+                        </Button>}
                       </div>
                     </td>
                   </tr>
@@ -353,13 +367,13 @@ export function ClassManagement() {
               </Card>
               <Card>
                 <CardHeader>
-                  <Typography variant="h5" className="flex items-center justify-between p-4">
+                  <Typography variant="h5" className="flex justify-between items-center p-4">
                     <span>Danh sách học sinh</span>
-                    <UserPlusIcon className="h-5 w-5 text-blue-gray-500" />
+                    <UserPlusIcon className="w-5 h-5 text-blue-gray-500" />
                   </Typography>
                 </CardHeader>
                 <CardBody>
-                  <div className="flex items-center space-x-2 mb-4">
+                  {rolesAdmin && <div className="flex items-center mb-4 space-x-2">
                     <Select
                       label="Chọn học sinh"
                       value={newStudentName}
@@ -377,27 +391,27 @@ export function ClassManagement() {
                     }}>
                       Thêm
                     </Button>
-                  </div>
+                  </div>}
                   <table className="min-w-full">
                     <thead>
                       <tr>
-                        <th className="border-b border-studentsblue-gray-50 py-3 px-5 text-left">Tên học sinh</th>
-                        <th className="border-b border-blue-gray-50 py-3 px-5 text-left">Thao tác</th>
+                        <th className="px-5 py-3 text-left border-b border-studentsblue-gray-50">Tên học sinh</th>
+                        {rolesAdmin && <th className="px-5 py-3 text-left border-b border-blue-gray-50">Thao tác</th>}
                       </tr>
                     </thead>
                     <tbody>
                       {classDetails.students.map((student) => (
                         <tr key={student.studentId}>
-                          <td className="py-3 px-5 border-b border-blue-gray-50">{student.studentName}</td>
-                          <td className="py-3 px-5 border-b border-blue-gray-50">
+                          <td className="px-5 py-3 border-b border-blue-gray-50">{student.studentName}</td>
+                          {rolesAdmin && <td className="px-5 py-3 border-b border-blue-gray-50">
                             <Button
                               variant="outlined"
                               size="sm"
                               color="red"
                               onClick={() => handleDelStudent(student.studentId)}
                             >
-                              <TrashIcon className="h-4 w-4" />
-                            </Button></td>
+                              <TrashIcon className="w-4 h-4" />
+                            </Button></td>}
                         </tr>
                       ))}
                     </tbody>
@@ -413,15 +427,15 @@ export function ClassManagement() {
                   <table className="min-w-full">
                     <thead>
                       <tr>
-                        <th className="border-b border-blue-gray-50 py-3 px-5 text-left">Tên học sinh</th>
-                        <th className="border-b border-blue-gray-50 py-3 px-5 text-left">Điểm danh</th>
+                        <th className="px-5 py-3 text-left border-b border-blue-gray-50">Tên học sinh</th>
+                        <th className="px-5 py-3 text-left border-b border-blue-gray-50">Điểm danh</th>
                       </tr>
                     </thead>
                     <tbody>
                       {classDetails.students.map((student) => (
                         <tr key={student.studentId}>
-                          <td className="py-3 px-5 border-b border-blue-gray-50">{student.studentName}</td>
-                          <td className="py-3 px-5 border-b border-blue-gray-50">
+                          <td className="px-5 py-3 border-b border-blue-gray-50">{student.studentName}</td>
+                          <td className="px-5 py-3 border-b border-blue-gray-50">
                             <Checkbox
                               checked={attendanceList.includes(student.studentId)}
                               onChange={() => handleAttendanceChange(student.studentId)}
@@ -431,7 +445,7 @@ export function ClassManagement() {
                       ))}
                     </tbody>
                   </table>
-                  <Button className="mt-4 flex justify-center mx-auto" onClick={handleSubmitAttendance}>
+                  <Button className="flex justify-center mx-auto mt-4" onClick={handleSubmitAttendance}>
                     Ghi nhận điểm danh
                   </Button>
                 </CardBody>
@@ -480,7 +494,6 @@ export function ClassForm({ onSubmit, initialData, teachers }) {
       teacherId: "", // Thêm trường teacherId
     }
   );
-  console.log(formData);
 
   const handleChange = (e) => {
     const { name, value } = e.target

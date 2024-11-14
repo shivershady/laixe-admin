@@ -1,4 +1,3 @@
-import { CurrencyDollarIcon } from "@heroicons/react/24/solid";
 import {
   Button,
   Card,
@@ -8,9 +7,11 @@ import {
   Typography
 } from "@material-tailwind/react";
 import { useEffect, useState } from 'react';
-import Chart from "react-apexcharts";
 
 import { statisticService } from "@/services/statisticService";
+import { CurrencyDollarIcon } from "@heroicons/react/24/solid";
+import Chart from "react-apexcharts";
+import { toast } from 'react-toastify';
 
 const fetchData = async (startDate, endDate) => {
   const response = await statisticService.revenueStatistics({ startDate, endDate });
@@ -35,8 +36,13 @@ export function Home() {
     getData();
   }, []);
 
-  const handleSearch = () => {
-    getData();
+  const handleSearch = async () => {
+    try {
+      getData();
+      toast.success("Tìm kiếm thành công!");
+    } catch (error) {
+      toast.error("Có lỗi xảy ra trong quá trình tìm kiếm.");
+    }
   };
 
   const totalRevenue = rawData.reduce((sum, item) => sum + item.revenue, 0);
@@ -80,12 +86,12 @@ export function Home() {
   ];
 
   return (
-    <div className="container mx-auto p-4 min-h-screen bg-gray-50">
+    <div className="container p-4 mx-auto min-h-screen bg-gray-50">
       <Typography variant="h2" color="blue-gray" className="mb-4">
         Thống kê doanh thu
       </Typography>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 gap-4 mb-6 md:grid-cols-3">
         <Input
           type="date"
           value={startDate}
@@ -103,7 +109,7 @@ export function Home() {
 
       <Card className="mb-6">
         <CardBody className="flex items-center">
-          <CurrencyDollarIcon className="w-12 h-12 text-green-500 mr-4" />
+          <CurrencyDollarIcon className="mr-4 w-12 h-12 text-green-500" />
           <div>
             <Typography variant="h6" color="blue-gray">
               Tổng doanh thu
@@ -138,11 +144,11 @@ export function Home() {
           </Typography>
         </CardHeader>
         <CardBody className="overflow-x-auto">
-          <table className="w-full min-w-max table-auto text-left">
+          <table className="w-full min-w-max text-left table-auto">
             <thead>
               <tr>
                 {["Thời gian", "Doanh thu"].map((head) => (
-                  <th key={head} className="border-b border-blue-gray-100 bg-blue-gray-50 p-4">
+                  <th key={head} className="p-4 bg-blue-gray-50 border-b border-blue-gray-100">
                     <Typography
                       variant="small"
                       color="blue-gray"

@@ -1,15 +1,4 @@
-/**
-=========================================================
-* Material Tailwind Dashboard React - v2.1.0
-=========================================================
-* Product Page: https://www.creative-tim.com/product/material-tailwind-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/material-tailwind-dashboard-react/blob/main/LICENSE.md)
-* Coded by Creative Tim
-=========================================================
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
+import 'react-toastify/dist/ReactToastify.css';
 import "../public/css/tailwind.css";
 
 import { MaterialTailwindControllerProvider } from "@/context";
@@ -17,6 +6,7 @@ import { ThemeProvider } from "@material-tailwind/react";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
 import App from "./App";
 import { UserProvider } from './hooks/UserContext';
 
@@ -27,6 +17,15 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <MaterialTailwindControllerProvider>
           <UserProvider>
             <App />
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              closeOnClick
+              pauseOnHover
+              draggable
+              pauseOnFocusLoss
+            />
           </UserProvider>
         </MaterialTailwindControllerProvider>
       </ThemeProvider>

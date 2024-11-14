@@ -2,7 +2,7 @@ import {
   PencilIcon,
   PlusIcon,
   TrashIcon
-} from "@heroicons/react/24/outline"
+} from "@heroicons/react/24/outline";
 import {
   Button,
   Card,
@@ -14,10 +14,11 @@ import {
   DialogHeader,
   Input,
   Typography,
-} from "@material-tailwind/react"
-import { useEffect, useState } from "react"
+} from "@material-tailwind/react";
+import { useEffect, useState } from "react";
 
-import { userService } from "@/services/userService"
+import { userService } from "@/services/userService";
+import { toast } from 'react-toastify';
 
 export function TeacherManagement() {
   const [teachers, setTeachers] = useState([])
@@ -67,29 +68,27 @@ export function TeacherManagement() {
   }, [])
 
   const handleAddTeacher = async () => {
-    // Validate form fields
     if (!newTeacher.userName || !newTeacher.email || !newTeacher.age || !newTeacher.phoneNumber || !newTeacher.address || !newTeacher.password) {
-      alert("Vui lòng điền đầy đủ thông tin!");
+      toast.error("Vui lòng điền đầy đủ thông tin!");
       return;
     }
 
     try {
-      const payload = {
-        ...newTeacher,
-        roleIds: [teacherRoleId]
-      }
-      await userService.createUser(payload)
-      setIsAddDialogOpen(false)
-      fetchTeachers() // Refresh the list
+      const payload = { ...newTeacher, roleIds: [teacherRoleId] };
+      await userService.createUser(payload);
+      setIsAddDialogOpen(false);
+      fetchTeachers();
+      toast.success("Thêm giáo viên thành công!");
     } catch (error) {
-      console.error('Error creating teacher:', error)
+      console.error('Error creating teacher:', error);
+      toast.error("Có lỗi xảy ra khi thêm giáo viên.");
     }
-  }
+  };
 
   const handleEditTeacher = async () => {
     // Validate form fields
     if (!selectedTeacher.userName || !selectedTeacher.email || !selectedTeacher.age || !selectedTeacher.phoneNumber || !selectedTeacher.address) {
-      alert("Vui lòng điền đầy đủ thông tin!");
+      toast.error("Vui lòng điền đầy đủ thông tin!");
       return;
     }
 
@@ -101,8 +100,10 @@ export function TeacherManagement() {
       await userService.updateUser(selectedTeacher.id, payload)
       setIsEditDialogOpen(false)
       fetchTeachers() // Refresh the list
+      toast.success("Cập nhật giáo viên thành công!")
     } catch (error) {
       console.error('Error updating teacher:', error)
+      toast.error("Có lỗi xảy ra khi cập nhật giáo viên.")
     }
   }
 
@@ -111,24 +112,26 @@ export function TeacherManagement() {
       await userService.deleteUser(selectedTeacher.id)
       setIsDeleteDialogOpen(false)
       fetchTeachers() // Refresh the list
+      toast.success("Xóa giáo viên thông!")
     } catch (error) {
       console.error('Error deleting teacher:', error)
+      toast.error("Có lỗi xảy ra khi xóa giáo viên.")
     }
   }
 
   return (
     <>
-      <Card className="container mx-auto p-4 mt-8">
+      <Card className="container p-4 mx-auto mt-8">
         <CardHeader>
-          <Typography variant="h3" className="font-bold p-4">Quản lý giáo viên</Typography>
+          <Typography variant="h3" className="p-4 font-bold">Quản lý giáo viên</Typography>
         </CardHeader>
         <CardBody>
           <div className="mb-6">
             <Button
-              className="flex items-center gap-2"
+              className="flex gap-2 items-center"
               onClick={() => setIsAddDialogOpen(true)}
             >
-              <PlusIcon className="h-5 w-5" /> Thêm giáo viên
+              <PlusIcon className="w-5 h-5" /> Thêm giáo viên
             </Button>
           </div>
           <CardBody className="overflow-x-auto px-0 pt-0 pb-2">
@@ -136,7 +139,7 @@ export function TeacherManagement() {
               <thead>
                 <tr>
                   {["Họ tên", "Email", "Tuổi", "Số điện thoại", "Địa chỉ", "Thao tác"].map((el) => (
-                    <th key={el} className="border-b border-blue-gray-50 py-3 px-5 text-left">
+                    <th key={el} className="px-5 py-3 text-left border-b border-blue-gray-50">
                       <Typography variant="small" className="text-[11px] font-bold uppercase text-blue-gray-400">
                         {el}
                       </Typography>
@@ -147,12 +150,12 @@ export function TeacherManagement() {
               <tbody>
                 {teachers.map((teacher) => (
                   <tr key={teacher.id}>
-                    <td className="py-3 px-5 border-b">{teacher.userName}</td>
-                    <td className="py-3 px-5 border-b">{teacher.email}</td>
-                    <td className="py-3 px-5 border-b">{teacher.age}</td>
-                    <td className="py-3 px-5 border-b">{teacher.phoneNumber}</td>
-                    <td className="py-3 px-5 border-b">{teacher.address}</td>
-                    <td className="py-3 px-5 border-b">
+                    <td className="px-5 py-3 border-b">{teacher.userName}</td>
+                    <td className="px-5 py-3 border-b">{teacher.email}</td>
+                    <td className="px-5 py-3 border-b">{teacher.age}</td>
+                    <td className="px-5 py-3 border-b">{teacher.phoneNumber}</td>
+                    <td className="px-5 py-3 border-b">{teacher.address}</td>
+                    <td className="px-5 py-3 border-b">
                       <div className="flex space-x-2">
                         <Button
                           variant="outlined"
@@ -162,7 +165,7 @@ export function TeacherManagement() {
                             setIsEditDialogOpen(true)
                           }}
                         >
-                          <PencilIcon className="h-4 w-4" />
+                          <PencilIcon className="w-4 h-4" />
                         </Button>
                         <Button
                           variant="outlined"
@@ -173,7 +176,7 @@ export function TeacherManagement() {
                             setIsDeleteDialogOpen(true)
                           }}
                         >
-                          <TrashIcon className="h-4 w-4" />
+                          <TrashIcon className="w-4 h-4" />
                         </Button>
                       </div>
                     </td>

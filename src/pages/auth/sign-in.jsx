@@ -7,6 +7,7 @@ import {
 import { authServices } from "@/services/authServices";
 import { useState } from "react"; // Thêm import useState
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 export function SignIn() {
   const [email, setEmail] = useState(""); // Trạng thái cho email
@@ -30,10 +31,12 @@ export function SignIn() {
       });
       if (response.token) {
         localStorage.setItem('token', response.token);
+        toast.success("Đăng nhập thành công!"); // Hiển thị thông báo thành công
         navigate('/dashboard/class')
       }
     } catch (error) {
       console.log("Lỗi:", error)
+      toast.error("Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin."); // Hiển thị thông báo lỗi
     }
   };
 

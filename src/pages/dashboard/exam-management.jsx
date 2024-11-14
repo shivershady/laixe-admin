@@ -25,6 +25,7 @@ import Pagination from "@/components/Pagination";
 import { courseServices } from "@/services/courseServices";
 import { examServices } from "@/services/examServices";
 import { questionService } from "@/services/questionService";
+import { toast } from 'react-toastify';
 
 const examTypes = [
   { label: "Lý thuyết", value: 1 },
@@ -103,8 +104,9 @@ export function ExamManagement() {
       await examServices.postExam(newExam);
       await fetchExams();
       setIsAddDialogOpen(false);
+      toast.success("Thêm bài kiểm tra thành công!");
     } catch (error) {
-      console.error('Error adding exam:', error);
+      toast.error("Có lỗi xảy ra khi thêm bài kiểm tra.");
     }
   };
 
@@ -113,8 +115,10 @@ export function ExamManagement() {
       await examServices.editExam(updatedExam.examId, updatedExam);
       await fetchExams();
       setIsEditDialogOpen(false);
+      toast.success("Cập nhật bài kiểm tra thành công!");
     } catch (error) {
       console.error('Error editing exam:', error);
+      toast.error("Có lỗi xảy ra khi cập nhật bài kiểm tra.");
     }
   };
 
@@ -123,8 +127,9 @@ export function ExamManagement() {
       await examServices.deleteExam(id);
       await fetchExams();
       setIsDeleteDialogOpen(false);
+      toast.success("Xóa bài kiểm tra thành công!");
     } catch (error) {
-      console.error('Error deleting exam:', error);
+      toast.error("Có lỗi xảy ra khi xóa bài kiểm tra.");
     }
   };
 
@@ -221,8 +226,10 @@ export function ExamManagement() {
         await questionService.postQuestion(updatedExam.examId, formData);
         await fetchExams();
         setIsDetailDialogOpen(false);
+        toast.success("Cập nhật bài kiểm tra thành công!");
       } catch (error) {
         console.error('Error updating exam:', error);
+        toast.error("Có lỗi xảy ra khi cập nhật bài kiểm tra.");
       }
     }
     if (questions.length > 0 && updatedExam.type == 2) {
@@ -238,8 +245,10 @@ export function ExamManagement() {
         await questionService.postPractice(updatedExam.examId, payload);
         await fetchExams();
         setIsDetailDialogOpen(false);
+        toast.success("Cập nhật bài kiểm tra thành công!");
       } catch (error) {
         console.error('Error updating exam:', error);
+        toast.error("Có lỗi xảy ra khi cập nhật bài kiểm tra.");
       }
     }
   };
